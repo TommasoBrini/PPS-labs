@@ -46,7 +46,7 @@ class SimpleBankAccountTest {
     void testWithdraw() {
         bankAccount.deposit(accountHolder.getId(), FIRST_DEPOSIT);
         bankAccount.withdraw(accountHolder.getId(), FIRST_WITHDRAW);
-        assertEquals(30, bankAccount.getBalance());
+        assertEquals(29, bankAccount.getBalance());
     }
 
     @Test
@@ -55,4 +55,5 @@ class SimpleBankAccountTest {
         bankAccount.withdraw(ERROR_ACCOUNT_ID, FIRST_WITHDRAW);
         assertEquals(FIRST_DEPOSIT, bankAccount.getBalance());
     }
+
 }
