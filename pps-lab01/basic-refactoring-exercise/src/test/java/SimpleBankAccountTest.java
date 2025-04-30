@@ -20,40 +20,46 @@ class SimpleBankAccountTest {
 
     @BeforeEach
     void beforeEach(){
-        accountHolder = new AccountHolder("Mario", "Rossi", 1);
-        bankAccount = new SimpleBankAccount(accountHolder, INITIAL_BALANCE);
+        this.accountHolder = new AccountHolder("Mario", "Rossi", 1);
+        this.bankAccount = new SimpleBankAccount(this.accountHolder, INITIAL_BALANCE);
     }
 
     @Test
     void testInitialBalance() {
-        assertEquals(INITIAL_BALANCE, bankAccount.getBalance());
+        assertEquals(INITIAL_BALANCE, this.bankAccount.getBalance());
     }
 
     @Test
     void testDeposit() {
-        bankAccount.deposit(accountHolder.getId(), FIRST_DEPOSIT);
-        assertEquals(FIRST_DEPOSIT, bankAccount.getBalance());
+        this.bankAccount.deposit(this.accountHolder.getId(), FIRST_DEPOSIT);
+        assertEquals(FIRST_DEPOSIT, this.bankAccount.getBalance());
     }
 
     @Test
     void testWrongDeposit() {
-        bankAccount.deposit(accountHolder.getId(), FIRST_DEPOSIT);
-        bankAccount.deposit(ERROR_ACCOUNT_ID, 50);
-        assertEquals(FIRST_DEPOSIT, bankAccount.getBalance());
+        this.bankAccount.deposit(this.accountHolder.getId(), FIRST_DEPOSIT);
+        this.bankAccount.deposit(ERROR_ACCOUNT_ID, 50);
+        assertEquals(FIRST_DEPOSIT, this.bankAccount.getBalance());
     }
 
     @Test
     void testWithdraw() {
-        bankAccount.deposit(accountHolder.getId(), FIRST_DEPOSIT);
-        bankAccount.withdraw(accountHolder.getId(), FIRST_WITHDRAW);
-        assertEquals(29, bankAccount.getBalance());
+        this.bankAccount.deposit(this.accountHolder.getId(), FIRST_DEPOSIT);
+        this.bankAccount.withdraw(this.accountHolder.getId(), FIRST_WITHDRAW);
+        assertEquals(29, this.bankAccount.getBalance());
     }
 
     @Test
     void testWrongWithdraw() {
-        bankAccount.deposit(accountHolder.getId(), FIRST_DEPOSIT);
-        bankAccount.withdraw(ERROR_ACCOUNT_ID, FIRST_WITHDRAW);
-        assertEquals(FIRST_DEPOSIT, bankAccount.getBalance());
+        this.bankAccount.deposit(this.accountHolder.getId(), FIRST_DEPOSIT);
+        this.bankAccount.withdraw(ERROR_ACCOUNT_ID, FIRST_WITHDRAW);
+        assertEquals(FIRST_DEPOSIT, this.bankAccount.getBalance());
     }
 
+    @Test
+    void testNegativeAmount(){
+        this.bankAccount.deposit(this.accountHolder.getId(), FIRST_DEPOSIT);
+        this.bankAccount.withdraw(this.accountHolder.getId(), FIRST_DEPOSIT);
+        assertEquals(FIRST_DEPOSIT, this.bankAccount.getBalance());
+    }
 }
