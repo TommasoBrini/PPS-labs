@@ -24,4 +24,12 @@ public interface Logics{
      * @return whether position row,col has the pawn
      */
     boolean hasPawn(int row, int col);
+
+    /**
+     *
+     * @return true if pawn and knight are not set, false otherwise
+     */
+    boolean isEmpty();
+
+
 }
