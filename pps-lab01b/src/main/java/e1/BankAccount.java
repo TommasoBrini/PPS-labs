@@ -1,21 +1,9 @@
 package e1;
 
-public class BankAccount {
+public interface BankAccount {
+    int getBalance();
 
-    private CoreBankAccount base = new CoreBankAccount();
+    void deposit(int amount);
 
-    public int getBalance() {
-        return base.getBalance();
-    }
-
-    public void deposit(int amount) {
-        base.deposit(amount);
-    }
-
-    public void withdraw(int amount) {
-        if (this.getBalance() < amount){
-            throw new IllegalStateException();
-        }
-        base.withdraw(amount + 1);
-    }
+    void withdraw(int amount);
 }

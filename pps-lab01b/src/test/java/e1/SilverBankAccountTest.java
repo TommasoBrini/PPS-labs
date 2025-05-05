@@ -6,13 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class BankAccountTest {
+public class SilverBankAccountTest {
+    private static final int INITIAL_DEPOSIT = 1000;
 
     private BankAccount account;
 
     @BeforeEach
     void init(){
-        this.account = new BankAccount();
+        this.account = BankAccountFactory.silverBankAccount();
     }
 
     @Test
@@ -22,20 +23,20 @@ public class BankAccountTest {
 
     @Test
     public void testCanDeposit() {
-        this.account.deposit(1000);
-        assertEquals(1000, this.account.getBalance());
+        this.account.deposit(INITIAL_DEPOSIT);
+        assertEquals(INITIAL_DEPOSIT, this.account.getBalance());
     }
 
     @Test
     public void testCanWithdraw() {
-        this.account.deposit(1000);
+        this.account.deposit(INITIAL_DEPOSIT);
         this.account.withdraw(200);
         assertEquals(799, this.account.getBalance());
     }
 
     @Test
     public void testCannotWithdrawMoreThanAvailable(){
-        this.account.deposit(1000);
+        this.account.deposit(INITIAL_DEPOSIT);
         assertThrows(IllegalStateException.class, () -> this.account.withdraw(1200));
     }
 
