@@ -144,6 +144,10 @@ object Sequences: // Essentially, generic linkedlists
      */
     def partition[A](s: Sequence[A])(pred: A => Boolean): (Sequence[A], Sequence[A]) = ???
 
+    def foldLeft(sequence: Sequence[Int])(default: Int)(operator: (Int, Int) => Int): Int = sequence match
+      case Cons(h, t) => foldLeft(t)(operator(default, h))(operator)
+      case Nil() => default
+
   end Sequence
 end Sequences
 

@@ -86,4 +86,9 @@ class SequenceTest:
     assertEquals(Nil(), evenEmpty)
     assertEquals(Nil(), oddEmpty)
 
+  @Test def testFoldLeft(): Unit =
+    val lst = Cons(3, Cons(7, Cons(1, Cons(5, Nil()))))
+    foldLeft(lst)(0)(_ - _)
+
+
 end SequenceTest
