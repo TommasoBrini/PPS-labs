@@ -39,8 +39,19 @@ object Streams extends App:
 
     // Task 3
 
-    def takeWhile[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = ???
-    
+    def takeWhile[A](stream: Stream[A])(pred: A => Boolean): Stream[A] = stream match
+      case Cons(head, tail) if (pred(head())) => cons(head(), takeWhile(tail())(pred))
+      case _ => empty()
+
+    def fill[A](n: Int)(k: A): Stream[A] = n match
+      case 0 => empty()
+      case _ => cons(k, fill(n-1)(k))
+
+    def fibonacci(): Stream[Int] =
+      def _fibonacci(a: Int, b: Int): Stream[Int] =
+        cons(a, _fibonacci(b, a + b))
+      _fibonacci(0, 1)  
+
     def interleave[A](stream1: Stream[A], stream2: Stream[A]): Stream[A] = ???
   end Stream
 end Streams
