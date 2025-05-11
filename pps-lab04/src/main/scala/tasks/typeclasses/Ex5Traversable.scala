@@ -1,6 +1,8 @@
 package u04lab
-import u03.Sequences.* 
+import u03.Sequences.*
 import Sequence.*
+import u03.Optionals.*
+import Optional.*
 
 /*  Exercise 5: 
  *  - Generalise by ad-hoc polymorphism logAll, such that:
@@ -17,10 +19,28 @@ import Sequence.*
 
 object Ex5Traversable:
 
+  trait Traversable[T[_]]:
+    def foreach[A](ta: T[A])(f: A => Unit): Unit
+
   def log[A](a: A): Unit = println("The next element is: "+a)
 
-  def logAll[A](seq: Sequence[A]): Unit = seq match
-    case Cons(h, t) => log(h); logAll(t)
-    case _ => ()
+  given Traversable[Sequence] with
+    def foreach[A](seq: Sequence[A])(f: A => Unit): Unit = seq match
+      case Cons(h, t) => f(h); foreach(t)(f)
+      case _ => ()
+      
+  given Traversable[Optional] with
+    def foreach[A](opt: Optional[A])(f: A => Unit): Unit = opt match
+      case Just(a) => f(a)
+      case Empty() => ()
+
+  def logAll[A, T[_]: Traversable](traversable: T[A])(f: A => Unit): Unit =
+    summon[Traversable[T]].foreach(traversable)(f)
 
   
+@main def tryTraversable =
+  import Ex5Traversable.*
+
+  logAll(Cons(1, Cons(2, Nil())))(log)
+  logAll(Just("hello"))(log)
+  logAll(Just("world"))(println) // logs the single element
