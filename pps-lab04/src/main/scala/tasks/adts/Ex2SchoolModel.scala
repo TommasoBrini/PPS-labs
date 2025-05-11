@@ -1,6 +1,6 @@
 package tasks.adts
-import u03.extensionmethods.Optionals.*
 import u03.extensionmethods.Sequences.*
+import Sequence.*
 
 /*  Exercise 2: 
  *  Implement the below trait, and write a meaningful test.
@@ -110,22 +110,38 @@ object SchoolModel:
        *
        */
       def hasCourse(name: String): Boolean
-  object BasicSchoolModule extends SchoolModule:
-    override type School = Nothing
-    override type Teacher = Nothing
-    override type Course = Nothing
 
-    def teacher(name: String): Teacher = ???
-    def course(name: String): Course = ???
-    def emptySchool: School = ???
+  object BasicSchoolModule extends SchoolModule:
+
+    private case class TeacherToCourses(teacher: Teacher, course:Course)
+    private case class SchoolImpl(teachers: Sequence[Teacher], courses: Sequence[Course], teacherToCourses: Sequence[TeacherToCourses])
+
+    opaque override type School = SchoolImpl
+    opaque override type Teacher = String
+    opaque override type Course = String
+
+    def teacher(name: String): Teacher = name
+    def course(name: String): Course = name
+    def emptySchool: School = SchoolImpl(Nil(), Nil(), Nil())
 
     extension (school: School)
-      def courses: Sequence[String] = ???
-      def teachers: Sequence[String] = ???
-      def setTeacherToCourse(teacher: Teacher, course: Course): School = ???
-      def coursesOfATeacher(teacher: Teacher): Sequence[Course] = ???
-      def hasTeacher(name: String): Boolean = ???
-      def hasCourse(name: String): Boolean = ???
+      def courses: Sequence[String] = school.courses
+      def teachers: Sequence[String] = school.teachers
+      def setTeacherToCourse(teacher: Teacher, course: Course): School =
+        SchoolImpl(
+          if (school.teachers.contains(teacher)) school.teachers
+          else school.teachers.concat(Cons(teacher, Nil())),
+          if (school.courses.contains(course)) school.courses
+          else school.courses.concat(Cons(course, Nil())),
+          if (school.teacherToCourses.contains(TeacherToCourses(teacher, course))) school.teacherToCourses
+          else school.teacherToCourses.concat(Cons(TeacherToCourses(teacher, course), Nil()))
+        )
+      def coursesOfATeacher(teacher: Teacher): Sequence[Course] =
+        school.teacherToCourses.filter(_.teacher == teacher).map(_.course)
+      def hasTeacher(name: String): Boolean =
+        school.teachers.contains(name)
+      def hasCourse(name: String): Boolean =
+        school.courses.contains(name)
 @main def examples(): Unit =
   import SchoolModel.BasicSchoolModule.*
   val school = emptySchool
