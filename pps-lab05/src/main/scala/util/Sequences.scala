@@ -2,6 +2,8 @@ package util
 import Optionals.Optional.*
 import util.Optionals.Optional
 
+import scala.annotation.tailrec
+
 object Sequences: // Essentially, generic linkedlists
   
   enum Sequence[E]:
@@ -51,6 +53,13 @@ object Sequences: // Essentially, generic linkedlists
       def reverse(): Sequence[A] = sequence match
         case Cons(h, t) => t.reverse().concat(Cons(h, Nil()))
         case _ => Nil()
+    
+      @tailrec
+      def distinct(acc: Sequence[A] = Nil()): Sequence[A] = sequence match
+        case Cons(h, t) if !acc.contains(h) => t.distinct(Cons(h, acc))
+        case Cons(_, t) => t.distinct(acc)
+        case _ => acc
+      
 @main def trySequences =
   import Sequences.* 
   val sequence = Sequence(1, 2, 3)
