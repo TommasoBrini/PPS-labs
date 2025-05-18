@@ -5,7 +5,6 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import polyglot.Pair;
-import polyglot.a01a.Results;
 
 public class GUI extends JFrame {
 

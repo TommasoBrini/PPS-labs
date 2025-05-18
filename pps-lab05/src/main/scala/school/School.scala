@@ -2,9 +2,6 @@ package school
 
 import util.Sequences.Sequence
 import Sequence.*
-import util.Optionals.Optional
-
-import scala.annotation.tailrec
 
 trait Teacher:
   def name: String
@@ -15,16 +12,14 @@ object Teacher:
 
 trait Course:
   def name: String
-  def category: String
 
 object Course:
-  def apply(name: String, category: String): Course = CourseImpl(name, category)
-  def unapply(c: Course): Option[(String, String)] = Some(c.name, c.category)
-  private case class CourseImpl(name: String, category: String) extends Course
+  def apply(name: String): Course = CourseImpl(name)
+  private case class CourseImpl(name: String) extends Course
 
 trait School:
-  def courses(): Sequence[String]
-  def teachers(): Sequence[String]
+  def teachers: Sequence[String]
+  def courses: Sequence[String]
   def setTeacherToCourse(teacher: Teacher, course: Course): School
   def coursesOfATeacher(teacher: Teacher): Sequence[Course]
   def hasTeacher(name: String): Boolean
@@ -33,17 +28,23 @@ trait School:
 object School:
   def apply(school: Sequence[(Teacher, Course)]): School = SchoolImpl(school)
   def emptySchool: School = apply(Nil())
-
+  def teacher(name: String): Teacher = Teacher(name)
+  def course(name: String): Course = Course(name)
   private class SchoolImpl(school: Sequence[(Teacher, Course)]) extends School:
-    override def teachers(): Sequence[String] = school.map((t, _) => t.name).distinct()
-    override def courses(): Sequence[String] = school.map((_, c) => c.name).distinct()
+
+    override def teachers: Sequence[String] = school.map((t, _) => t.name).distinct()
+
+    override def courses: Sequence[String] = school.map((_, c) => c.name).distinct()
+
     override def setTeacherToCourse(teacher: Teacher, course: Course): School =
-      School(Cons((teacher, course), school))
+      if !(school.contains((teacher, course))) then apply(Cons((teacher, course), school)) else apply(school)
+
     override def coursesOfATeacher(teacher: Teacher): Sequence[Course] =
       school.filter((t, _) => t == teacher).map((_, c) => c)
-    override def hasTeacher(name: String): Boolean = teachers().contains(name)
-    override def hasCourse(name: String): Boolean = courses().contains(name)
 
-@main def examples(): Unit =
-  val courses = Sequence(Course("Math", "Science"), Course("Information", "Science"), Course("Physics", "Science"))
-  
+    override def hasTeacher(name: String): Boolean =
+      teachers.contains(name)
+
+    override def hasCourse(name: String): Boolean =
+      courses.contains(name)
+
