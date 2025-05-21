@@ -42,6 +42,49 @@ class LoggingRobot(val robot: Robot) extends Robot:
     robot.act()
     println(robot.toString)
 
+class RobotWithBattery(val robot: Robot, val cost: Int, var battery: Int) extends Robot:
+  export robot.{position, direction}
+  private def charge: Boolean =
+    battery > 0
+  private def consume(): Unit =
+    battery -= cost
+  override def turn(dir: Direction): Unit =
+    if charge then
+      robot.turn(dir)
+      consume()
+  override def act(): Unit =
+    if charge then
+      robot.act()
+      consume()
+
+class RobotCanFail(val robot: Robot, val failProbability: Int) extends Robot:
+  export robot.{position, direction}
+  import scala.util.Random
+  private val random = Random(1234)
+  private def success: Boolean =
+    random.nextDouble() * 100 > failProbability
+
+  override def turn(dir: Direction): Unit =
+    if success then
+      robot.turn(dir)
+
+  override def act(): Unit =
+    if success then
+      robot.act()
+
+class RobotRepeated(robot: Robot, repetition: Int) extends Robot:
+  export robot.{position, direction}
+
+  override def turn(dir: Direction): Unit =
+    for
+      _ <- 1 to repetition
+    do robot.turn(dir)
+
+  override def act(): Unit =
+    for
+      _ <- 1 to repetition
+    do robot.act()
+
 @main def testRobot(): Unit =
   val robot = LoggingRobot(SimpleRobot((0, 0), Direction.North))
   robot.act() // robot at (0, 1) facing North
